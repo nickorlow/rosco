@@ -15,9 +15,9 @@ pub extern "C" fn _start() -> ! {
     unsafe { interrupts::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable(); 
     
-    println!("Hello, World!");
+    println!("ROSCO has booted!");
     set_color!(0xa);
-    println!("Helno, World!");
+    println!("Hello, World!");
 
     loop {}
 }
@@ -36,9 +36,9 @@ fn print_panic(info: &PanicInfo) {
     
     print!  ("                                ");
     set_color!(0x71);
-    print!  (" Kernel Panic! ");
+    print! (" Kernel Panic! ");
     set_color!(0x1f);
-    print!  ("                                 ");
+    print!("                                 ");
     print!("                                                                                ");
     print!("                                                                                ");
 
