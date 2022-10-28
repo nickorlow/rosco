@@ -1,17 +1,22 @@
 #![no_std]
 #![no_main]
+#![feature(abi_x86_interrupt)]
 
 use core::panic::PanicInfo;
 mod vga_txt;
+pub mod interrupts;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     use core::fmt::Write;
+    interrupts::init_idt();
+    unsafe { interrupts::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable(); 
+    
     println!("Hello, World!");
     set_color!(0xa);
     println!("Helno, World!");
-    
-    panic!("OS not built yet!");
+
     loop {}
 }
 
@@ -47,5 +52,5 @@ fn print_panic(info: &PanicInfo) {
     print!("                                                                                ");
     print!("                                                                                ");
     print!("                                                                                ");
-    print!("                                                                                ");
+    print!("                                                                               x");
 }
