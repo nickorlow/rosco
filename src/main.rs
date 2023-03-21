@@ -17,9 +17,46 @@ pub extern "C" fn _start() -> ! {
     
     println!("ROSCO has booted!");
     set_color!(0xa);
-    println!("Hello, World!");
+    println!("");
 
-    loop {}
+  
+
+    loop {
+        print!("ROSCO SYS> ");
+        let cmd: [char; 100] = readln!();
+        parse_command(cmd);
+    }
+}
+
+fn parse_command(cmd: [char;100]) {
+    if(streq("panic usr", cmd)) {
+        panic!("User-initiated panic");
+    } else if(streq("panic mem", cmd)) {
+        unsafe{
+            let carr: [char;1] = ['\0'; 1];
+            for i in 0..5 {
+                if(carr[i] == '\0') {} // memory exception
+            }
+        }
+    } else if(streq("info", cmd)) {
+        println!("ROSCO (Rust Operating System for Computers, Obviously!)");
+        println!("Inspired by: George Costanza v0.1");
+    } else {
+        println!("Command not found.");
+    }
+}
+
+fn streq(str: &str, carr: [char;100]) -> bool {
+    let mut x = 0;
+    for i in 0..str.len() {
+        if(carr[i] != str.chars().nth(i).unwrap()) {
+            
+            return false;
+        }
+        x = i;
+    }
+    
+    return true;
 }
 
 #[panic_handler]
@@ -29,6 +66,9 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 fn print_panic(info: &PanicInfo) {
+    use x86_64::instructions::interrupts;  
+
+    interrupts::without_interrupts(|| {  
     clrscr!();
     set_color!(0x1f);
     print!("                                                                                ");
@@ -59,4 +99,5 @@ fn print_panic(info: &PanicInfo) {
     print!("                                                                                ");
     print!("                                                                                ");
     print!("                                                                               x");
+});
 }
